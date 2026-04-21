@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { auth, db } from '../firebase';
 import { signOut } from 'firebase/auth';
-// Firebase se collection aur addDoc import kiya messages save karne ke liye
+// Firebase se collection aur addDoc import kiya messages database mein save karne ke liye
 import { doc, getDoc, updateDoc, collection, addDoc } from 'firebase/firestore'; 
 import { useNavigate } from 'react-router-dom';
 import '../App.css'; 
@@ -201,7 +201,7 @@ function Profile() {
     });
   };
 
-  // 🌟 HANDLE CONTACT FORM SUBMISSION (Real Database Connection)
+  // 🌟 HANDLE CONTACT FORM SUBMISSION (Database + Web3Forms Email)
   const handleContactSubmit = async (e) => {
     e.preventDefault();
     if (!contactForm.name || !contactForm.email || !contactForm.message) {
@@ -211,13 +211,28 @@ function Profile() {
 
     setIsSending(true);
     try {
-      // Firebase ke 'messages' collection mein data save karna
+      // 1. Firebase Database mein Save Karna
       await addDoc(collection(db, "messages"), {
         name: contactForm.name,
         email: contactForm.email,
         message: contactForm.message,
         timestamp: new Date(),
         userId: auth.currentUser ? auth.currentUser.uid : 'Guest'
+      });
+
+      // 2. Nadeem ko Email Notification Bhejna (Web3Forms ke zariye)
+      const emailData = new FormData();
+      // YAHAN AAPKI WEB3FORMS ACCESS KEY DAALI HAI 👇
+      emailData.append("access_key", "733da440-6246-4a96-a26b-e29e437c158e"); 
+      emailData.append("subject", "NEXUS Portfolio: New Contact Message!");
+      emailData.append("from_name", "NEXUS Portfolio Notification");
+      emailData.append("name", contactForm.name);
+      emailData.append("email", contactForm.email);
+      emailData.append("message", contactForm.message);
+
+      await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: emailData
       });
       
       showToast("✅ Message sent successfully!");
@@ -390,7 +405,7 @@ function Profile() {
                 <input 
                   type="text" 
                   required 
-                  placeholder="Enter Your Name" 
+                  placeholder="Enter Your Name " 
                   value={contactForm.name}
                   onChange={(e) => setContactForm({...contactForm, name: e.target.value})}
                   disabled={isSending}
