@@ -20,7 +20,7 @@ function Profile() {
 
   const [displayedRole, setDisplayedRole] = useState('');
 
-  // Default data
+  // Default data structure + Custom Arrays for new items
   const [userData, setUserData] = useState({
     name: 'Nadeem',
     role: 'BCA Scholar | Developer',
@@ -28,12 +28,15 @@ function Profile() {
     github: '#',
     linkedin: '#',
     dpUrl: 'https://ui-avatars.com/api/?name=Nadeem&background=4318FF&color=fff&size=150',
-    coverUrl: ''
+    coverUrl: '',
+    customSkills: [],
+    customProjects: [],
+    customContents: []
   });
 
   const [formData, setFormData] = useState({ ...userData });
 
-  // 1. Fetch Firebase Data (100% Vercel Safe - Using functional state update)
+  // 1. Fetch Firebase Data 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
@@ -42,7 +45,6 @@ function Profile() {
           const docSnap = await getDoc(doc(db, "users", user.uid));
           if (docSnap.exists()) {
             const data = docSnap.data();
-            // Yahan prev use kiya hai, isliye userData ki dependency nahi chahiye
             setUserData(prev => ({ ...prev, ...data }));
             setFormData(prev => ({ ...prev, ...data }));
           }
@@ -56,7 +58,7 @@ function Profile() {
       }
     });
     return () => unsubscribe();
-  }, [navigate]); // Ekdum clean, koi extra dependency nahi
+  }, [navigate]);
 
   // 2. Theme Handling
   useEffect(() => {
@@ -86,7 +88,7 @@ function Profile() {
       
       return () => clearInterval(timer);
     }
-  }, [userData.role, activeTab]); // Dependencies explicitly declared
+  }, [userData.role, activeTab]);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -145,6 +147,23 @@ function Profile() {
   const handleInputChange = (e) => {
     const { id, value } = e.target;
     setFormData(prev => ({ ...prev, [id]: value }));
+  };
+
+  // Dynamic Content Handlers
+  const handleArrayChange = (index, field, value, arrayName) => {
+    const newArray = [...(formData[arrayName] || [])];
+    newArray[index][field] = value;
+    setFormData(prev => ({ ...prev, [arrayName]: newArray }));
+  };
+
+  const addArrayItem = (arrayName, defaultItem) => {
+    setFormData(prev => ({ ...prev, [arrayName]: [...(prev[arrayName] || []), { id: Date.now(), ...defaultItem }] }));
+  };
+
+  const removeArrayItem = (arrayName, index) => {
+    const newArray = [...(formData[arrayName] || [])];
+    newArray.splice(index, 1);
+    setFormData(prev => ({ ...prev, [arrayName]: newArray }));
   };
 
   // Project Search & Filter Logic
@@ -255,35 +274,40 @@ function Profile() {
             </div>
           </div>
 
-          {/* Technical Skills Card */}
+          {/* Technical Skills Card (DEFAULT + CUSTOM) */}
           <div className="card" style={{ marginBottom: '25px' }}>
             <h3><i className="fas fa-code"></i> Technical Skills</h3>
-            <div className="grid-container" style={{ marginBottom: 0 }}>
-              <div>
-                <div className="skill-item">
-                  <div className="skill-info"><span>JavaScript / React</span> <span>90%</span></div>
-                  <div className="skill-bar"><div className="skill-progress" style={{ width: '90%' }}></div></div>
-                </div>
-                <div className="skill-item">
-                  <div className="skill-info"><span>HTML & CSS</span> <span>95%</span></div>
-                  <div className="skill-bar"><div className="skill-progress" style={{ width: '95%' }}></div></div>
-                </div>
+            <div className="skills-grid">
+              {/* DEFAULT SKILLS - Hamesha rahenge */}
+              <div className="skill-item">
+                <div className="skill-info"><span>JavaScript / React</span> <span>90%</span></div>
+                <div className="skill-bar"><div className="skill-progress" style={{ width: '90%' }}></div></div>
               </div>
-              <div>
-                <div className="skill-item">
-                  <div className="skill-info"><span>Node.js / Backend</span> <span>80%</span></div>
-                  <div className="skill-bar"><div className="skill-progress" style={{ width: '80%' }}></div></div>
-                </div>
-                <div className="skill-item">
-                  <div className="skill-info"><span>UI/UX Design</span> <span>75%</span></div>
-                  <div className="skill-bar"><div className="skill-progress" style={{ width: '75%' }}></div></div>
-                </div>
+              <div className="skill-item">
+                <div className="skill-info"><span>HTML & CSS</span> <span>95%</span></div>
+                <div className="skill-bar"><div className="skill-progress" style={{ width: '95%' }}></div></div>
               </div>
+              <div className="skill-item">
+                <div className="skill-info"><span>Node.js / Backend</span> <span>80%</span></div>
+                <div className="skill-bar"><div className="skill-progress" style={{ width: '80%' }}></div></div>
+              </div>
+              <div className="skill-item">
+                <div className="skill-info"><span>UI/UX Design</span> <span>75%</span></div>
+                <div className="skill-bar"><div className="skill-progress" style={{ width: '75%' }}></div></div>
+              </div>
+              
+              {/* CUSTOM SKILLS - Jo user add karega */}
+              {(userData.customSkills || []).map(skill => (
+                <div className="skill-item" key={skill.id}>
+                  <div className="skill-info"><span style={{color: '#4318FF'}}>{skill.name}</span> <span>{skill.percent}%</span></div>
+                  <div className="skill-bar"><div className="skill-progress" style={{ width: `${skill.percent}%` }}></div></div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* 2. PROJECTS SECTION */}
+        {/* 2. PROJECTS SECTION (DEFAULT + CUSTOM) */}
         <section id="projects" className={`section-tab ${activeTab === 'projects' ? 'active' : ''}`}>
           <div className="filter-container">
             <button className={`filter-btn ${projectFilter === 'all' ? 'active' : ''}`} onClick={() => setProjectFilter('all')}>All</button>
@@ -292,7 +316,7 @@ function Profile() {
           </div>
 
           <div className="grid-container" id="projectsContainer">
-            {/* NEXUS Project */}
+            {/* DEFAULT PROJECTS - Hamesha rahenge */}
             {isProjectVisible('frontend', 'Project: NEXUS') && (
               <div className="card project-card">
                 <h3>Project: NEXUS</h3>
@@ -300,8 +324,6 @@ function Profile() {
                 <span className="tag">HTML5</span> <span className="tag">CSS3</span> <span className="tag">JavaScript</span>
               </div>
             )}
-            
-            {/* CG Engine Project */}
             {isProjectVisible('backend', 'Computer Graphics Engine') && (
               <div className="card project-card">
                 <h3>Computer Graphics Engine</h3>
@@ -309,8 +331,6 @@ function Profile() {
                 <span className="tag">C++</span> <span className="tag">OpenGL</span>
               </div>
             )}
-
-            {/* Portfolio Project */}
             {isProjectVisible('frontend', 'Portfolio Dashboard') && (
               <div className="card project-card">
                 <h3>Portfolio Dashboard</h3>
@@ -318,12 +338,24 @@ function Profile() {
                 <span className="tag">Vanilla JS</span> <span className="tag">CSS Variables</span>
               </div>
             )}
+
+            {/* CUSTOM PROJECTS - Jo user add karega */}
+            {(userData.customProjects || []).filter(p => isProjectVisible(p.type, p.title)).map(project => (
+              <div className="card project-card" key={project.id} style={{ border: '1px solid #4318FF' }}>
+                <h3>{project.title} <span style={{fontSize:'12px', color:'#4318FF'}}>(New)</span></h3>
+                <p style={{ color: 'var(--text-secondary)', marginBottom: '15px' }}>{project.desc}</p>
+                {project.tags.split(',').map((tag, idx) => (
+                  <span className="tag" key={idx}>{tag.trim()}</span>
+                ))}
+              </div>
+            ))}
           </div>
         </section>
 
-        {/* 3. CONTENT SECTION */}
+        {/* 3. CONTENT SECTION (DEFAULT + CUSTOM) */}
         <section id="content" className={`section-tab ${activeTab === 'content' ? 'active' : ''}`}>
           <div className="grid-container">
+            {/* DEFAULT CONTENT */}
             <div className="card" style={{ borderLeft: '5px solid red' }}>
               <h3><i className="fab fa-youtube" style={{ color: 'red' }}></i> Nadeem Fact Star</h3>
               <p style={{ color: 'var(--text-secondary)' }}>Exploring amazing facts and sharing knowledge with the world.</p>
@@ -332,6 +364,14 @@ function Profile() {
               <h3><i className="fab fa-youtube" style={{ color: '#00f2fe' }}></i> Tech with Nadeem</h3>
               <p style={{ color: 'var(--text-secondary)' }}>Tech tutorials, coding guides, and software reviews.</p>
             </div>
+
+            {/* CUSTOM CONTENT */}
+            {(userData.customContents || []).map(item => (
+              <div className="card" style={{ borderLeft: `5px solid ${item.color}` }} key={item.id}>
+                <h3><i className="fas fa-play-circle" style={{ color: item.color }}></i> {item.title}</h3>
+                <p style={{ color: 'var(--text-secondary)' }}>{item.desc}</p>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -342,11 +382,11 @@ function Profile() {
             <form onSubmit={(e) => { e.preventDefault(); showToast("✅ Message sent successfully!"); e.target.reset(); }}>
               <div className="form-group">
                 <label>Your Name</label>
-                <input type="text" required placeholder="John Doe" />
+                <input type="text" required placeholder="Enter Your Name " />
               </div>
               <div className="form-group">
                 <label>Your Email</label>
-                <input type="email" required placeholder="john@example.com" />
+                <input type="email" required placeholder="Enter Your Email" />
               </div>
               <div className="form-group">
                 <label>Message</label>
@@ -359,7 +399,7 @@ function Profile() {
 
         {/* 5. SETTINGS SECTION */}
         <section id="settings" className={`section-tab ${activeTab === 'settings' ? 'active' : ''}`}>
-          <div className="card" style={{ maxWidth: '600px', margin: '0 auto' }}>
+          <div className="card" style={{ maxWidth: '700px', margin: '0 auto' }}>
             <h3><i className="fas fa-user-edit"></i> Edit Profile Info</h3>
             
             <div className="form-group">
@@ -385,12 +425,56 @@ function Profile() {
               <input type="url" id="linkedin" value={formData.linkedin || ''} onChange={handleInputChange} placeholder="https://linkedin.com/in/yourusername" disabled={isUpdating} />
             </div>
 
+            <hr style={{ margin: '30px 0', borderColor: 'var(--border-color)' }} />
+
+            {/* ADD NEW CUSTOM SKILLS */}
+            <h3><i className="fas fa-plus-circle"></i> Add Extra Skills</h3>
+            {(formData.customSkills || []).map((skill, index) => (
+              <div key={skill.id} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+                <input type="text" placeholder="Skill Name" value={skill.name} onChange={(e) => handleArrayChange(index, 'name', e.target.value, 'customSkills')} style={{ flex: 2 }} />
+                <input type="number" placeholder="%" value={skill.percent} onChange={(e) => handleArrayChange(index, 'percent', e.target.value, 'customSkills')} style={{ flex: 1 }} />
+                <button className="icon-btn" onClick={() => removeArrayItem('customSkills', index)} style={{ color: '#ff4757', background: 'transparent' }}><i className="fas fa-trash"></i></button>
+              </div>
+            ))}
+            <button className="upload-cover-btn" onClick={() => addArrayItem('customSkills', { name: 'New Skill', percent: '50' })} style={{ display: 'inline-block', marginBottom: '20px' }}>+ Add Extra Skill</button>
+
+            {/* ADD NEW CUSTOM PROJECTS */}
+            <h3><i className="fas fa-plus-circle"></i> Add Extra Projects</h3>
+            {(formData.customProjects || []).map((project, index) => (
+              <div key={project.id} style={{ border: '1px solid var(--border-color)', padding: '15px', borderRadius: '10px', marginBottom: '15px' }}>
+                <input type="text" placeholder="Project Title" value={project.title} onChange={(e) => handleArrayChange(index, 'title', e.target.value, 'customProjects')} style={{ marginBottom: '10px' }} />
+                <textarea placeholder="Description" value={project.desc} onChange={(e) => handleArrayChange(index, 'desc', e.target.value, 'customProjects')} rows="2" style={{ marginBottom: '10px' }}></textarea>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <select value={project.type} onChange={(e) => handleArrayChange(index, 'type', e.target.value, 'customProjects')} style={{ padding: '10px', borderRadius: '8px', background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: 'none', flex: 1 }}>
+                    <option value="frontend">Frontend</option>
+                    <option value="backend">Backend / System</option>
+                  </select>
+                  <input type="text" placeholder="Tags (comma separated)" value={project.tags} onChange={(e) => handleArrayChange(index, 'tags', e.target.value, 'customProjects')} style={{ flex: 2 }} />
+                  <button className="icon-btn" onClick={() => removeArrayItem('customProjects', index)} style={{ color: '#ff4757', background: 'transparent' }}><i className="fas fa-trash"></i></button>
+                </div>
+              </div>
+            ))}
+            <button className="upload-cover-btn" onClick={() => addArrayItem('customProjects', { title: 'New Project', desc: 'Project description...', type: 'frontend', tags: 'React, Firebase' })} style={{ display: 'inline-block', marginBottom: '20px' }}>+ Add Extra Project</button>
+
+            {/* ADD NEW CUSTOM CONTENT */}
+            <h3><i className="fas fa-plus-circle"></i> Add Extra Content / Channels</h3>
+            {(formData.customContents || []).map((content, index) => (
+              <div key={content.id} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+                <input type="text" placeholder="Content Title" value={content.title} onChange={(e) => handleArrayChange(index, 'title', e.target.value, 'customContents')} style={{ flex: 1 }} />
+                <input type="text" placeholder="Description" value={content.desc} onChange={(e) => handleArrayChange(index, 'desc', e.target.value, 'customContents')} style={{ flex: 2 }} />
+                <input type="color" value={content.color} onChange={(e) => handleArrayChange(index, 'color', e.target.value, 'customContents')} style={{ width: '40px', height: '40px', padding: '0', border: 'none', borderRadius: '5px', cursor: 'pointer' }} title="Brand Color" />
+                <button className="icon-btn" onClick={() => removeArrayItem('customContents', index)} style={{ color: '#ff4757', background: 'transparent' }}><i className="fas fa-trash"></i></button>
+              </div>
+            ))}
+            <button className="upload-cover-btn" onClick={() => addArrayItem('customContents', { title: 'New Page', desc: 'Description...', color: '#4318FF' })} style={{ display: 'inline-block', marginBottom: '30px' }}>+ Add Extra Content</button>
+
             <button 
               className={`btn-save ${isUpdating ? 'loading' : ''}`} 
               onClick={saveProfileData} 
               disabled={isUpdating}
+              style={{ width: '100%', marginTop: '10px' }}
             >
-              {isUpdating ? <><i className="fas fa-spinner fa-spin"></i> Updating...</> : 'Save All Changes'}
+              {isUpdating ? <><i className="fas fa-spinner fa-spin"></i> Saving...</> : 'Save All Changes'}
             </button>
           </div>
         </section>
