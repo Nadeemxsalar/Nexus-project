@@ -1,0 +1,231 @@
+/* =========================================
+   ADVANCED AUTH STYLES (Ultra Glassmorphism)
+   ========================================= */
+
+/* 1. Animated Background & Centering */
+.auth-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  padding: 20px;
+  overflow: hidden; /* Bahar nikalte hue glowing effects ko rokne ke liye */
+  
+  /* Animated Gradient Background */
+  background: linear-gradient(-45deg, #0b1437, #111c44, #2b3674, #0f2027);
+  background-size: 400% 400%;
+  animation: gradientBG 12s ease infinite;
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 2. Floating Glowing Orbs (The "Advanced" Effect) */
+.auth-wrapper::before, 
+.auth-wrapper::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px); /* Roshni ko dhundhla (glow) karne ke liye */
+  z-index: 0;
+  animation: floatOrb 10s infinite alternate ease-in-out;
+}
+
+.auth-wrapper::before {
+  width: 350px;
+  height: 350px;
+  background: #4318FF; /* Nexus Blue Glow */
+  top: -10%;
+  left: -5%;
+}
+
+.auth-wrapper::after {
+  width: 300px;
+  height: 300px;
+  background: #ff6b6b; /* Reddish Pink Glow */
+  bottom: -10%;
+  right: -5%;
+  animation-delay: -5s; /* Ulta ghumne ke liye */
+}
+
+@keyframes floatOrb {
+  0% { transform: translateY(0px) scale(1); }
+  100% { transform: translateY(80px) scale(1.2); }
+}
+
+/* 3. The Premium Glass Card */
+.auth-container {
+  position: relative;
+  z-index: 1; /* Glowing orbs ke upar dikhane ke liye */
+  background: rgba(255, 255, 255, 0.03); /* Ekdum light transparent */
+  backdrop-filter: blur(25px); /* Shishe jaisa blur */
+  -webkit-backdrop-filter: blur(25px);
+  
+  /* 3D Glass Effect ke liye borders */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+  
+  padding: 45px 35px;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5); /* Gehra shadow */
+  text-align: center;
+  animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  0% { opacity: 0; transform: scale(0.9) translateY(30px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* 4. Typography */
+.auth-container h2 {
+  margin-bottom: 30px;
+  color: #ffffff;
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.auth-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* 5. Modern Input Fields */
+.auth-container input {
+  width: 100%;
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.2); /* Thoda dark background text show karne ke liye */
+  color: #ffffff;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+}
+
+.auth-container input::placeholder {
+  color: #8f9bba;
+}
+
+.auth-container input:focus {
+  border-color: #4318FF;
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 20px rgba(67, 24, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+/* 6. Advanced Gradient Button */
+.auth-container button {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(90deg, #4318FF, #868CFF, #4318FF);
+  background-size: 200% auto;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  margin-top: 15px;
+  box-shadow: 0 8px 20px rgba(67, 24, 255, 0.3);
+}
+
+.auth-container button:hover {
+  background-position: right center; /* Gradient sweep effect */
+  transform: translateY(-4px);
+  box-shadow: 0 12px 25px rgba(67, 24, 255, 0.6);
+}
+
+.auth-container button:active {
+  transform: translateY(2px);
+}
+
+.auth-container button:disabled {
+  background: #2b3674;
+  color: #8f9bba;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* 7. Bottom Links */
+.auth-container p {
+  margin-top: 25px;
+  color: #a3aed1;
+  font-size: 0.95rem;
+}
+
+.auth-container a {
+  color: #868CFF;
+  text-decoration: none;
+  font-weight: 700;
+  margin-left: 5px;
+  transition: 0.3s ease;
+  position: relative;
+}
+
+/* Link pe hover underline effect */
+.auth-container a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: #ff6b6b;
+  transition: width 0.3s ease;
+}
+
+.auth-container a:hover::after {
+  width: 100%;
+}
+.auth-container a:hover {
+  color: #fff;
+}
+
+/* 8. Mobile Responsiveness */
+@media (max-width: 480px) {
+  .auth-wrapper {
+    padding: 0;
+  }
+  .auth-container {
+    padding: 50px 25px;
+    border-radius: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: none;
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .auth-wrapper::before, .auth-wrapper::after {
+    filter: blur(100px); /* Mobile pe glow thoda soft ho jayega */
+  }
+}
+/* Error Text Styling */
+.error-text {
+  color: #ff4757;
+  font-size: 13px;
+  margin-top: 10px; /* Input ke theek niche chipkane ke liye */
+  margin-bottom: 10px;
+  display: block;
+  font-weight: 600;
+  padding-left: 5px;
+  animation: fadeIn 0.3s ease;
+}

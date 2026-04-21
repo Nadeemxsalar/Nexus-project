@@ -1,0 +1,90 @@
+/* src/components/Profile.css - PROFILE SPECIFIC STYLES */
+
+/* --- Sidebar --- */
+.sidebar { width: 260px; background: var(--sidebar-bg); padding: 30px 20px; display: flex; flex-direction: column; border-right: 1px solid var(--border-color); transition: var(--transition); z-index: 100; }
+.brand { font-size: 24px; font-weight: 800; color: var(--text-primary); margin-bottom: 50px; text-align: center; letter-spacing: 1px; }
+.brand span { color: var(--accent-color); }
+.nav-links { list-style: none; display: flex; flex-direction: column; gap: 15px; }
+.nav-item { padding: 15px 20px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; font-weight: 600; color: var(--text-secondary); transition: var(--transition); }
+.nav-item:hover, .nav-item.active { background: var(--accent-color); color: #fff; transform: translateX(5px); }
+
+/* --- Main Content & Header --- */
+.main-content { flex: 1; padding: 30px 40px; width: calc(100% - 260px); transition: var(--transition); }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; flex-wrap: wrap; gap: 20px; }
+.header-actions { display: flex; gap: 15px; align-items: center; }
+
+.search-box { position: relative; display: flex; align-items: center; }
+.search-box input { padding: 10px 15px 10px 40px; border-radius: 20px; width: 200px; }
+.search-box input:focus { width: 250px; }
+.search-box i { position: absolute; left: 15px; color: var(--text-secondary); }
+
+.icon-btn { background: var(--card-bg); border: 1px solid var(--border-color); padding: 10px 15px; border-radius: 50px; cursor: pointer; color: var(--text-primary); font-size: 18px; transition: var(--transition); display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.icon-btn:hover { background: var(--border-color); transform: translateY(-2px); }
+
+/* --- Tabs --- */
+.section-tab { display: none; animation: fadeIn 0.5s ease; }
+.section-tab.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* --- Profile Info & DP --- */
+.profile-header { background: var(--card-bg); border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); margin-bottom: 30px; position: relative; }
+.cover-photo { width: 100%; height: 200px; position: relative; }
+.upload-cover-btn { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); border: none; color: white; padding: 8px 15px; border-radius: 8px; cursor: pointer; }
+.profile-info { padding: 0 30px 30px; display: flex; flex-direction: column; align-items: center; margin-top: -60px; }
+.dp-container { position: relative; width: 120px; height: 120px; border-radius: 50%; border: 5px solid var(--card-bg); background: #fff; margin-bottom: 15px; }
+.dp-container img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.upload-dp-btn { position: absolute; bottom: 0; right: 0; background: var(--accent-color); color: #fff; width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; border: 3px solid var(--card-bg); }
+.user-name { font-size: 28px; font-weight: 800; margin-bottom: 5px; }
+.user-role { color: var(--text-secondary); font-weight: 600; margin-bottom: 15px; min-height: 20px; }
+.user-role::after { content: '|'; animation: blink 1s infinite; color: var(--accent-color); }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+/* --- Social Links & Cards --- */
+.social-links { display: flex; gap: 15px; margin-bottom: 20px; }
+.social-links a { color: var(--text-secondary); font-size: 20px; transition: var(--transition); text-decoration: none; }
+.social-links a:hover { color: var(--accent-color); transform: scale(1.2); }
+
+.grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 25px; }
+.card { background: var(--card-bg); padding: 25px; border-radius: 20px; box-shadow: var(--shadow); border: 1px solid var(--border-color); }
+.card h3 { margin-bottom: 15px; font-size: 18px; }
+
+/* --- Timeline & Skills --- */
+.timeline { border-left: 3px solid var(--accent-color); margin-left: 15px; padding-left: 20px; position: relative; }
+.timeline-item { margin-bottom: 20px; position: relative; }
+.timeline-item::before { content: ''; position: absolute; left: -29px; top: 5px; width: 15px; height: 15px; background: var(--card-bg); border: 3px solid var(--accent-color); border-radius: 50%; }
+.timeline-date { font-size: 12px; color: var(--accent-color); font-weight: 800; margin-bottom: 5px; display: block; }
+
+.skill-item { margin-bottom: 15px; }
+.skill-info { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px; font-weight: 600; }
+.skill-bar { width: 100%; height: 8px; background: var(--border-color); border-radius: 10px; overflow: hidden; }
+.skill-progress { height: 100%; background: var(--accent-color); border-radius: 10px; transition: width 1s ease-in-out; }
+
+/* --- Project Filters & Tags --- */
+.filter-container { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+.filter-btn { padding: 8px 15px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-primary); cursor: pointer; font-weight: 600; transition: var(--transition); }
+.filter-btn.active, .filter-btn:hover { background: var(--accent-color); color: white; border-color: var(--accent-color); }
+.project-card { transition: all 0.4s ease; }
+.project-card.hide { display: none; }
+.tag { display: inline-block; padding: 5px 12px; background: rgba(67, 24, 255, 0.1); color: var(--accent-color); border-radius: 20px; font-size: 12px; font-weight: 600; margin: 5px 5px 0 0; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; color: var(--text-secondary); font-weight: 600; font-size: 14px; }
+.menu-toggle { display: none; font-size: 24px; cursor: pointer; color: var(--text-primary); }
+
+/* --- Responsive (Mobile View) --- */
+@media (max-width: 992px) {
+    .sidebar { position: fixed; left: -100%; top: 0; height: 100vh; width: 280px; box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
+    .sidebar.active { left: 0; }
+    .main-content { width: 100%; padding: 20px; }
+    .menu-toggle { display: block; }
+    .search-box input { width: 150px; }
+}
+
+/* --- Print View --- */
+@media print {
+    .sidebar, .header, .upload-cover-btn, .upload-dp-btn, .filter-container, #contact { display: none !important; }
+    .main-content { padding: 0; width: 100%; }
+    .section-tab { display: block !important; margin-bottom: 20px; }
+    #settings { display: none !important; }
+    body { background: white; color: black; }
+    .card, .profile-header { box-shadow: none; border: 1px solid #ccc; }
+}

@@ -1,38 +1,103 @@
-.App {
-  text-align: center;
+/* src/App.css - GLOBAL STYLES */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+/* --- CSS Variables (Themes) --- */
+:root {
+    --bg-color: #f4f7fe;
+    --sidebar-bg: #ffffff;
+    --card-bg: #ffffff;
+    --text-primary: #2b3674;
+    --text-secondary: #a3aed1;
+    --accent-color: #4318FF;
+    --accent-hover: #3311db;
+    --border-color: #e2e8f0;
+    --shadow: 0 18px 40px rgba(112, 144, 176, 0.12);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+[data-theme="dark"] {
+    --bg-color: #0b1437;
+    --sidebar-bg: #111c44;
+    --card-bg: #111c44;
+    --text-primary: #ffffff;
+    --text-secondary: #8f9bba;
+    --border-color: #2b3674;
+    --shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* --- Global Resets --- */
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: 'Inter', sans-serif; 
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+body { 
+    background-color: var(--bg-color); 
+    color: var(--text-primary); 
+    min-height: 100vh; 
+    overflow-x: hidden; 
+    transition: var(--transition); 
 }
 
-.App-link {
-  color: #61dafb;
+#root {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* --- Common Forms & Buttons --- */
+input, textarea { 
+    width: 100%; 
+    padding: 12px 15px; 
+    border-radius: 10px; 
+    border: 1px solid var(--border-color); 
+    background: var(--bg-color); 
+    color: var(--text-primary); 
+    font-size: 16px; 
+    transition: var(--transition); 
+    outline: none;
 }
+
+input:focus, textarea:focus { border-color: var(--accent-color); }
+
+.btn-save { 
+    background: var(--accent-color); 
+    color: white; 
+    border: none; 
+    padding: 12px 25px; 
+    border-radius: 10px; 
+    font-size: 16px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    width: 100%; 
+    transition: var(--transition); 
+}
+
+.btn-save:hover { background: var(--accent-hover); }
+.btn-save.loading { opacity: 0.7; cursor: not-allowed; background: var(--text-secondary); }
+
+/* --- Global Progress Bar --- */
+.global-progress-container {
+    position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: transparent; z-index: 9999;
+}
+.global-progress-bar {
+    height: 100%; background: #ff6b6b; width: 30%; border-radius: 0 5px 5px 0;
+    animation: indeterminate 1.5s infinite ease-in-out;
+}
+@keyframes indeterminate {
+    0% { transform: translateX(-100%) scaleX(0.2); }
+    50% { transform: translateX(100%) scaleX(0.8); }
+    100% { transform: translateX(350%) scaleX(0.2); }
+}
+
+/* --- Toast Notification --- */
+#toast { 
+    visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; 
+    border-radius: 10px; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; 
+    transform: translateX(-50%); box-shadow: 0px 4px 15px rgba(0,0,0,0.2); font-weight: 600; 
+}
+#toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+@keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
+@keyframes fadeout { from { bottom: 30px; opacity: 1; } to { bottom: 0; opacity: 0; } }
