@@ -4,7 +4,7 @@ import { signOut } from 'firebase/auth';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import '../App.css'; 
-import './Profile.css'; // Naya import yahan lagao
+import './Profile.css';
 
 function Profile() {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ function Profile() {
 
   const [displayedRole, setDisplayedRole] = useState('');
 
-  // Default data ekdum original HTML jaisa
+  // Default data
   const [userData, setUserData] = useState({
     name: 'Nadeem',
     role: 'BCA Scholar | Developer',
@@ -33,25 +33,30 @@ function Profile() {
 
   const [formData, setFormData] = useState({ ...userData });
 
-  // 1. Fetch Firebase Data
+  // 1. Fetch Firebase Data (100% Vercel Safe - Using functional state update)
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         setIsUpdating(true);
-        const docSnap = await getDoc(doc(db, "users", user.uid));
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          const mergedData = { ...userData, ...data };
-          setUserData(mergedData);
-          setFormData(mergedData);
+        try {
+          const docSnap = await getDoc(doc(db, "users", user.uid));
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            // Yahan prev use kiya hai, isliye userData ki dependency nahi chahiye
+            setUserData(prev => ({ ...prev, ...data }));
+            setFormData(prev => ({ ...prev, ...data }));
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          setIsUpdating(false);
         }
-        setIsUpdating(false);
       } else {
         navigate('/');
       }
     });
     return () => unsubscribe();
-  }, [navigate]);
+  }, [navigate]); // Ekdum clean, koi extra dependency nahi
 
   // 2. Theme Handling
   useEffect(() => {
@@ -63,12 +68,13 @@ function Profile() {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  // 3. Typewriter Effect (Original logic)
+  // 3. Typewriter Effect
   useEffect(() => {
     if (activeTab === 'dashboard') {
       let i = 0;
       const text = userData.role || 'BCA Scholar | Developer';
       setDisplayedRole('');
+      
       const timer = setInterval(() => {
         if (i < text.length) {
           setDisplayedRole((prev) => prev + text.charAt(i));
@@ -77,9 +83,10 @@ function Profile() {
           clearInterval(timer);
         }
       }, 100);
+      
       return () => clearInterval(timer);
     }
-  }, [userData.role, activeTab]);
+  }, [userData.role, activeTab]); // Dependencies explicitly declared
 
   const showToast = (msg) => {
     setToastMessage(msg);
